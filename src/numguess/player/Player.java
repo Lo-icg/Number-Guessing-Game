@@ -1,28 +1,18 @@
-package numguess.builder.player;
+package numguess.player;
+
+import numguess.builder.GameUtility.Difficulty;
 
 public class Player {
 
 	private String name;
-	private int chances;
-	private int attempt;
-	private int guess;
-	private Difficulty choice;
-	
-	public int getAttempt() {
-		return attempt;
-	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void reduceChances() {
-		chances--;
-	}
-	public int getChances() {
-		return chances;
-	}
+	
+	private Difficulty choice;
 	public Difficulty getChoice() {
 		return choice;
 	}
@@ -40,7 +30,9 @@ public class Player {
 			this.choice = Difficulty.HARD;
 			chances = 3;
 		}
-	}	
+	}
+	
+	private int guess;
 	public int getGuess() {
 		return guess;
 	}
@@ -48,14 +40,31 @@ public class Player {
 		this.guess = guess;
 		attempt++;
 	}
-
-	public enum Difficulty {
-		EASY, MEDIUM, HARD;
+	
+	private int chances;
+	public int getChances() {
+		return chances;
 	}
-
-
+	public void reduceChances() {
+		chances--;
+	}
+	public boolean haveChances() {
+		return chances != 0;
+	}
+	public void restoreChances() {
+		switch (this.choice) {
+		case EASY -> chances = 10;
+		case MEDIUM -> chances = 5;
+		case HARD -> chances = 3;
+		}
+	}
+	
+	private int attempt;
+	public int getAttempt() {
+		return attempt;
+	}
+	
 	private boolean playing = true;
-
 	public boolean notQuitting() {
 		return playing;
 	}
@@ -63,30 +72,14 @@ public class Player {
 		playing = false;
 	}
 
-	public boolean haveChances() {
-		return chances != 0;
-	}
-
-	public void restoreChances() {
-		switch (choice) {
-		case EASY -> chances = 10;
-		case MEDIUM -> chances = 5;
-		case HARD -> chances = 3;
-		}
-	}
-
-	private boolean guessed;
-
-	public boolean hasGuessed() {
+	private boolean guessed = false;
+	public boolean guessMacthed() {
 		return guessed = true;
 	}
-	
-	public boolean beenGuessed() {
+	public boolean hasGuessed() {
 		return guessed;
 	}
 	
-	public Player() {
-		setName("unknown");
-	}
-
+	public Player() {}
+	
 }

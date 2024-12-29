@@ -1,8 +1,8 @@
 package numguess.builder;
 
-import numguess.builder.player.Player;
+import numguess.builder.GameUtility.Difficulty;
 
-public final class Message {
+final class Message {
 
 	public static void print1() {
 		var msg1 = "\nWelcome to the Number Guessing Game!\n"
@@ -16,12 +16,11 @@ public final class Message {
 		System.out.println(msg1);
 	}
 
-	public static void print2(Player.Difficulty d) {
+	public static void print2(Difficulty d) {
 		var s  = d.toString().charAt(0) +  d.toString().toLowerCase().substring(1, d.toString().length());
 		System.out.println("\nGreat! You have selected the "+ s + " difficulty level.\n"
 				+ "Let's start the game!\n");
 	}
-
 
 	public static void print3(int attempt) {
 		System.out.println("\nCongratulations! You guessed the correct number in " + attempt + " attempts.");
@@ -30,8 +29,4 @@ public final class Message {
 	public static void print4() {
 		System.out.println("Your remaning guess chances is already run out.\n");
 	}
-	
-	
-
-
 }

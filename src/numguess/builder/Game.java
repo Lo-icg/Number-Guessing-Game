@@ -1,17 +1,18 @@
 package numguess.builder;
 
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.LinkedList;
 
-import numguess.builder.player.Player;
 import numguess.generator.Num;
+import numguess.player.Player;
 
 public class Game extends GameUtility {
 
-	private Player player;
-	private Num numToGuess;
+	private Player player;  // player
+	private int numToGuess; // number to guess
+	
+	// list of players who played, just to track the top player
+	private List<Player> playersRecord = new LinkedList<>();
 	
 	private Game() {
 	
@@ -20,7 +21,7 @@ public class Game extends GameUtility {
 			player = new Player();
 			numToGuess = Num.generate();
 			
-			player.setName(returnValues("Player name: "));
+			player.setName(returnString("Player name: "));
 			Message.print1();
 
 			player.setChoice(returnOption("Enter your choice: "));
@@ -29,9 +30,9 @@ public class Game extends GameUtility {
 			// player guessing state
 			while (player.haveChances() && player.notQuitting()) {
 
-				player.setGuess(returnValue("Enter your guess: "));
+				player.setGuess(returnInt("Enter your guess: "));
 
-				if (guessMatched()){
+				if (guessMatched()) {
 					Message.print3(player.getAttempt());
 					break;
 				} else {
@@ -41,9 +42,9 @@ public class Game extends GameUtility {
 
 				// if player runs out chances
 				if (!player.haveChances()) {
-					Message.print4();
 					
-					char selection = prompt("To continue type y or n to quit: ");
+					Message.print4();
+					char selection = returnChar("To continue type (y) or (n) to quit: ");
 
 					if (selection == 'y') player.restoreChances();
 					if (selection == 'n') player.quit();
@@ -51,51 +52,26 @@ public class Game extends GameUtility {
 			}
 
 			playersRecord.add(player);
-			displayTopPlayers();
+			displayTopPlayers(playersRecord);
 			
-			char selection = prompt("do you want to play again, type y or n to quit the game: ");
-			if (selection == 'y') numToGuess.reset();
+			char selection = returnChar("do you want to play again and beat the top player...\ntype (y) to play again or (n) to quit the game: ");
+			if (selection == 'y') numToGuess = Num.generate();
 			if (selection == 'n') playing = false;
 		}
-		
+		read.close();
 	}
 
-	private List<Player> playersRecord = new LinkedList<>();
-
-	private void displayTopPlayers() {
-
-		Optional<Player> topPlayer = Optional.of(playersRecord.stream()
-				.filter(p -> p.beenGuessed())
-				.min(Comparator.comparingInt(Player::getAttempt)).orElse(new Player()));
-		
-		if (topPlayer.get().beenGuessed()) {
-			
-			var borderline = "-".repeat(topPlayer.get().getName().length() + 30);
-			var record = "Player| " + topPlayer.get().getName() + " | Num of attempt| " + topPlayer.get().getAttempt() + " |";
-			System.out.println("\nTop player -> ");
-			System.out.println(borderline);
-			System.out.println(record);
-			System.out.println(borderline);
-			
-		} else {
-			System.out.println("Top player -> ");
-			System.out.println("--------");
-			System.out.println("| None |");
-			System.out.println("--------");
-		}
-		System.out.println();
-	}
-	
 	private boolean guessMatched() {
-		var m = guessMatched(numToGuess.get(), player.getGuess());
-		if (m) player.hasGuessed();
+		var m = guessMatched(numToGuess, player.getGuess());
+		if (m) player.guessMacthed();
 		return m;
 	}
 	
 	private void giveHint() {
-		giveGuessHint(numToGuess.get(), player.getGuess());
+		giveGuessHint(numToGuess, player.getGuess());
 	}
 
+	// run this program
 	public static void launch() {
 		new Game();
 	}
